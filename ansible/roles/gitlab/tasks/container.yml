@@ -1,0 +1,34 @@
+---
+
+# https://docs.gitlab.com/omnibus/docker/
+# sudo docker run --detach \
+#   --hostname gitlab.example.com \
+#   --publish 443:443 --publish 80:80 --publish 22:22 \
+#   --name gitlab \
+#   --restart always \
+#   --volume /srv/gitlab/config:/etc/gitlab \
+#   --volume /srv/gitlab/logs:/var/log/gitlab \
+#   --volume /srv/gitlab/data:/var/opt/gitlab \
+#   gitlab/gitlab-ce:latest
+- name: "Run image {{ gitlab.image.name }}:{{ gitlab.image.tag }} as service {{ gitlab.service.name }}"
+  docker_container:
+    name: "{{ gitlab.service.name }}"
+    image: "{{ gitlab.image.name }}:{{ gitlab.image.tag }}"
+    hostname: "gitlab.hcnp.io"
+    published_ports:
+      - "{{ gitlab.service.ports.http }}:80"
+      - "{{ gitlab.service.ports.https }}:443"
+      - "{{ gitlab.service.ports.ssh }}:22"
+    restart_policy: always
+    state: started
+    volumes:
+      - "{{ gitlab.storage }}/config:/etc/gitlab"
+      - "{{ gitlab.storage }}/logs:/var/log/gitlab"
+      - "{{ gitlab.storage }}/data:/var/opt/gitlab"
+
+- name: "register {{ gitlab.service.name }} service with the local consul agent"
+  consul:
+    service_name: "{{ gitlab.service.name }}-{{ item.value }}"
+    service_port: "{{ item.value }}"
+  with_dict: "{{ gitlab.service.ports }}"
+  when: service_consul_running and gitlab.service.ports is defined

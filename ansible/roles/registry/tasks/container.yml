@@ -19,6 +19,13 @@
     volumes:
       - /registry_data
 
+- name: "register {{ registry.service.name }} service with the local consul agent"
+  consul:
+    service_name: "{{ registry.service.name }}-{{ item.value }}"
+    service_port: "{{ item.value }}"
+  with_dict: "{{ registry.service.ports }}"
+  when: service_consul_running and registry.service.ports is defined
+
   # registry:
   #   image: library/registry:2.6
   #   environment:

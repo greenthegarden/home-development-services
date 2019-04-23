@@ -1,0 +1,5 @@
+---
+
+- name: "Install extensions"
+  command: code --install-extension {{ item }}
+  loop: "{{ code_extensions }}"

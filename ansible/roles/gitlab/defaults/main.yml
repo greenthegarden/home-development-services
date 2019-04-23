@@ -1,0 +1,23 @@
+---
+
+gitlab:
+  user:
+    name: gitlab
+  group:
+    name: gitlab
+  service:
+    name: gitlab
+    ports:
+      http: 80
+      https: 443
+      ssh: 22
+  image:
+    name: gitlab/gitlab-ce
+    tag: latest
+  storage: "{{ storage_base }}/gitlab"
+  directories: [
+    config,
+    logs,
+    data
+  ]
+  

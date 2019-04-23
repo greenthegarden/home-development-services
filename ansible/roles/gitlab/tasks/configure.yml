@@ -1,0 +1,48 @@
+---
+
+# Create group
+- name: "Create system group {{ gitlab.group.name }}"
+  become: yes
+  group:
+    name: "{{ gitlab.group.name }}"
+    state: present
+    system: yes
+
+# sudo useradd -r -s /sbin/nologin gitlab
+- name: Create system user {{ gitlab.user.name }}"
+  become: yes
+  user:
+    name: "{{ gitlab.user.name }}"
+    create_home: no
+    group: "{{ gitlab.group.name }}"
+    system: yes
+    shell: /sbin/nologin
+
+# usermod -a -G gitlab <user>
+- name: "Add user {{ ansible_user }} to group {{ gitlab.group.name }}"
+  become: yes
+  user:
+    name: "{{ ansible_user }}"
+    groups: "{{ gitlab.group.name }}"
+    append: yes
+
+# Create directories
+- name: "Create base directory {{ gitlab.storage }}"
+  become: yes
+  file:
+    name: "{{ gitlab.storage }}"
+    state: directory
+    owner: "{{ gitlab.user.name }}"
+    group: "{{ gitlab.group.name }}"
+    mode: 0755
+
+# Create directories
+- name: Create directories
+  become: yes
+  file:
+    name: "{{ gitlab.storage }}/{{ item }}"
+    state: directory
+    owner: "{{ gitlab.user.name }}"
+    group: "{{ gitlab.group.name }}"
+    mode: 0755
+  loop: "{{ gitlab.directories }}"
