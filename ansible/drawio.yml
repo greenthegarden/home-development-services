@@ -1,0 +1,6 @@
+---
+
+- hosts: drawio-nodes
+
+  roles:
+    - drawio

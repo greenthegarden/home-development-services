@@ -1,0 +1,11 @@
+---
+
+- hosts: local-system
+
+  tasks:
+
+    - import_role:
+        name: registry
+        tasks_from: container.yml
+      tags:
+        - registry

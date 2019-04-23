@@ -1,0 +1,13 @@
+---
+
+# consider replacing with a configuration file
+
+# See https://git-scm.com/docs/git-config for options
+
+- name: "Set git parameters"
+  git_config:
+    name: "{{ item.key }}"
+    scope: "{{ item.scope | default('global') }}"
+    value: "{{ item.value }}"
+  loop: "{{ git_config }}"
+  when: git_config is defined and (git_config | length > 0)

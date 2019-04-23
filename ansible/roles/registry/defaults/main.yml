@@ -1,0 +1,10 @@
+---
+
+registry:
+  service:
+    name: registry
+    ports:
+      http: 5000
+  image:
+    name: registry
+    tag: 2.7.1
